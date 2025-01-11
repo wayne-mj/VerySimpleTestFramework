@@ -6,8 +6,8 @@ module check_msgmod
 
     contains
     subroutine check_msg()
-        call suite("This is the suite")
-        call test("This is a test")
+        call suite("This is a test of the messages")
+        call test("This is a test message")
         call results()
     end subroutine
 end module check_msgmod

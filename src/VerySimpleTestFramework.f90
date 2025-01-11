@@ -4,7 +4,8 @@ module VerySimpleTestFramework
   implicit none
   private 
   
-  public :: suite, test, results
+  public :: suite, test, results, &
+            assert_equals
   
   !> Required constant parameters
   character(len=1), parameter     :: cr   = char(13)      ! Carriage return
@@ -77,6 +78,21 @@ module VerySimpleTestFramework
     module procedure  suites
   end interface
 
+  interface build_error_body
+    module procedure  build_error_body_INT, &
+                      build_error_body_REAL, &
+                      build_error_body_COMPLEX, &
+                      build_error_body_LOGICAL, &
+                      build_error_body_STRING
+  end interface
+
+  interface assert_equals
+    module procedure  assert_equals_real, &
+                      assert_equals_complex, &
+                      assert_equals_int, & 
+                      assert_equals_str    
+  end interface
+
 contains
   !>---------------------------------------------------------------------------------------------------<!
   !> Prints a "banner" type message to denote that there a suite of tests
@@ -115,4 +131,327 @@ contains
   end subroutine
   !>---------------------------------------------------------------------------------------------------<!
   
+  !> Display failed results for tests using the datatype ERROR_MSG_TYPE
+  !> This contains primatives of the datatypes required
+  subroutine display_failed_message(error)
+    type(error_msg_type)  :: error
+
+    if (DBG) then
+      print *, cyellow // "DISPLAY FAILED MESSAGE" // cclear
+    end if
+
+    if (error%msglength .gt. 0) then
+      print *, FAILEDMSG , error%msg
+    else 
+      print *, FAILEDMSG
+    end if
+
+    !> 1, 2, 3 etc ASSERT EQUALS INT, REAL, COMPLEX etc
+    !> Assert INTEGER fail
+    if (error%error_cat .eq. AEIF) then
+      call display_failed_int(error)
+    !> Assert REAL fail
+    else if (error%error_cat .eq. AERF) then
+      call display_failed_real(error)
+    !> Assert COMPLEX fail
+    else if (error%error_cat .eq. AECF) then
+      call display_failed_complex(error)
+    !> Assert CHARACTER string fail
+    else if (error%error_cat .eq. AESF) then
+      call display_failed_str(error)
+    !> Assert LOGICAL fail
+    else if (error%error_cat .eq. AELF) then
+      call display_failed_logical(error)
+    end if
+  end subroutine
+
+  !> Display failed results for values of INTEGERS
+  subroutine display_failed_int(error)
+    type(error_msg_type) :: error 
+
+    if (DBG) then
+      print *, cyellow // "INT CALLED INTERNALLY" // cclear
+    end if
+
+    print *, ACTMSG, error%i_actual
+    if(error%show_exp) then
+      print *, EXPMSG, error%i_expected
+    end if
+
+    if (error%show_tol) then
+      print *, TOLMSG, error%i_tol
+    end if
+  end subroutine
+
+  !> Display failed results for values of REALS
+  subroutine display_failed_real(error)
+    type(error_msg_type) :: error
+
+    if (DBG) then
+      print *, cyellow // "REAL CALLED INTERNALLY" // cclear
+    end if
+
+    print *, ACTMSG, error%r_actual
+    if (error%show_exp) then
+      print *, EXPMSG, error%r_expected
+    end if
+
+    if (error%show_tol) then
+      print *, TOLMSG, error%r_tol
+    end if
+  end subroutine
+
+  !> Display failed results for values of COMPLEX 
+  subroutine display_failed_complex(error)
+    type(error_msg_type) :: error
+
+    if (DBG) then
+      print *, cyellow // "COMPLEX CALLED INTERNALLY" // cclear
+    end if
+
+    print *, ACTMSG, error%c_actual
+    if (error%show_exp) then
+      print *, EXPMSG, error%c_expected
+    end if
+
+    if (error%show_tol) then
+      print *, TOLMSG, error%c_tol
+    end if
+  end subroutine
+
+  !> Display failed results for values of CHARACTER strings
+  subroutine display_failed_str(error)
+    type(error_msg_type) :: error
+    
+    if (DBG) then
+      print *, cyellow // "STR CALLED INTERNALLY" // cclear
+    end if
+
+    print *, ACTMSG, error%s_actual
+    print *, ACTMSG, error%s_alength
+    print *, EXPMSG, error%s_expected
+    print *, EXPMSG, error%s_elength
+  end subroutine
+
+  !> As above but uses a datatype for CHARACTERS to collect common results together
+  subroutine display_failed_strdata(msg, strdata)
+    character(*), intent(in)  :: msg
+    type(stringtype)          :: strdata
+    
+    if (DBG) then
+      print *, cyellow // "STRDATA CALLED INTERNALLY" // cclear
+    end if
+
+    if (len(msg) .gt. 0) then
+      print *, FAILEDMSG, msg
+    else 
+      print *, FAILEDMSG
+    end if
+
+    print *, ACTMSG, strdata%actual
+    print *, ACTMSG, strdata%alength    
+    print *, EXPMSG, strdata%expected
+    print *, EXPMSG, strdata%elength
+  end subroutine
+
+  !> Display the failed results of LOGICAL tests
+  subroutine display_failed_logical(error)
+    type(error_msg_type) :: error
+    
+    if (DBG) then
+      print *, cyellow // "LOGICAL CALLED INTERNALLY" // cclear
+    end if
+
+    print *, ACTMSG, error%l_actual
+    print *, EXPMSG, error%l_expected
+  end subroutine  
+
+  !>---------------------------------------------------------------------------------------------------<!
+
+  !> Build the error message from the error data type
+  function build_error_message(msg) result(error)
+    character(*), intent(in)  :: msg
+    integer                   :: msglength
+    type(error_msg_type)      :: error
+    
+    if (DBG) then
+      print *, cyellow // "build_error_message called" //cclear
+    end if
+
+    msglength = len_trim(msg)
+
+    if (msglength .gt. 0) then
+      allocate(character(msglength) :: error%msg)
+      error%msg = msg
+      error%msglength = msglength
+    end if    
+  end function
+
+  !> Build the body of the error message based on INTEGER types
+  subroutine build_error_body_INT(msg, actual, expected, tol, error)
+    character(*), intent(in)            :: msg
+    integer, intent(in)                 :: actual, expected, tol
+    type(error_msg_type), intent(inout) :: error
+
+    if (DBG) then
+      print *, cyellow // "build_error_body_INT called" //cclear
+    end if
+
+    error = build_error_message(msg)
+
+    error%error_cat = AEIF
+    error%i_actual = actual
+    error%i_expected = expected
+    error%i_tol = tol
+  end subroutine
+
+  !> Build the body of the error message based on REAL types
+  subroutine build_error_body_REAL(msg,actual, expected, tol, error)
+    character(*), intent(in)            :: msg
+    real, intent(in)                    :: actual, expected, tol
+    type(error_msg_type), intent(inout) :: error
+
+    if (DBG) then
+      print *, cyellow // "build_error_body_REAL called" //cclear
+    end if
+
+    error = build_error_message(msg)
+
+    error%error_cat = AERF
+    error%r_actual = actual
+    error%r_expected = expected
+    error%r_tol = tol
+  end subroutine
+
+  !> Build the body of the error message based on COMPLEX types
+  subroutine build_error_body_COMPLEX(msg, actual, expected, tol, error)
+    character(*), intent(in)            :: msg
+    complex, intent(in)                 :: actual, expected
+    real, intent(in)                    :: tol
+    type(error_msg_type), intent(inout) :: error
+
+    if (DBG) then
+      print *, cyellow // "build_error_body_COMPLEX called" //cclear
+    end if
+
+    error = build_error_message(msg)
+
+    error%error_cat = AECF
+    error%c_actual = actual
+    error%c_expected = expected
+    error%c_tol = tol
+  end subroutine
+
+  !> Build the body of the error message based on LOGICAL types
+  subroutine build_error_body_LOGICAL(msg, actual, expected, error)
+    character(*), intent(in)            :: msg
+    logical, intent(in)                 :: actual, expected
+    type(error_msg_type), intent(inout) :: error
+
+    if (DBG) then
+      print *, cyellow // "build_error_body_LOGICAL called" //cclear
+    end if
+
+    error = build_error_message(msg)
+
+    error%error_cat = AELF
+    error%l_actual = actual
+    error%l_expected = expected
+  end subroutine
+
+  !> Build the body of the error message based on CHARACTER string types
+  subroutine build_error_body_STRING(msg, actual, expected,alength, elength, error)
+    character(*), intent(in)            :: msg
+    character(*), intent(in)            :: actual, expected
+    integer, intent(in)                 :: alength, elength  
+    type(error_msg_type), intent(inout) :: error
+
+    if (DBG) then
+      print *, cyellow // "build_error_body_STRING called" //cclear
+    end if
+
+    error = build_error_message(msg)
+
+    error%error_cat = AESF
+    error%s_actual = actual
+    error%s_expected = expected
+    error%s_alength = alength
+    error%s_elength = elength
+  end subroutine
+
+  !>---------------------------------------------------------------------------------------------------<!
+
+  !> Test is an actual INTEGER is the expected INTEGER - no tolerance
+  subroutine assert_equals_int(actual, expected, tol)
+    integer, intent(in)   :: actual, expected, tol
+    type(error_msg_type)  :: error 
+
+    if (abs(actual - expected) .gt. tol ) then
+      call build_error_body("Integer Inequality", actual, expected, tol, error)
+      call display_failed_message(error)
+      failed = failed + 1
+    else 
+      print *, PASSMSG
+    end if
+  end subroutine
+
+  !> Test is an actual REAL is the expected REAL are within a given tolerance
+  subroutine assert_equals_real(actual, expected, tol)
+    real, intent(in)      :: actual, expected, tol
+    type(error_msg_type)  :: error
+
+    if (abs(actual - expected) .gt. tol) then
+      call build_error_body("Real Inequality", actual, expected, tol, error)
+      call display_failed_message(error)
+      failed = failed + 1
+    else 
+      print *, PASSMSG
+    end if
+  end subroutine
+
+  !> Test is an actual COMPLEX REAL/IMAGINE and expected COMPLEX REAL/IMAGINE 
+  !> value are within tolerance
+  subroutine assert_equals_complex(actual, expected, tol)
+    complex, intent(in)   :: actual, expected
+    real, intent(in)      :: tol
+    type(error_msg_type)  :: error  
+
+    if ((abs(real(actual) - real(expected)) .gt. tol) .and. (abs(aimag(actual)-aimag(expected)) .gt. tol)) then
+      call build_error_body("Complex Real and Imaginary Inequality", actual, expected, tol, error)
+      call display_failed_message(error)
+    else if (abs(real(actual) - real(expected)) .gt. tol) then
+      call build_error_body("Complex Real Inequality", actual, expected, tol, error)
+      call display_failed_message(error)
+      failed = failed + 1
+    else if (abs(aimag(actual)-aimag(expected)) .gt. tol) then
+      call build_error_body("Complex Imaginary Inequality", actual, expected, tol, error)
+      call display_failed_message(error)
+      failed = failed + 1
+    else
+      print *, PASSMSG
+    end if
+  end subroutine
+
+  !> Test if an actual CHARACTER string and expected CHARACTER string are equal
+  subroutine assert_equals_str(actual, expected)
+    character(*), intent(in)  :: actual, expected
+    integer                   :: alength, elength
+    type(error_msg_type)      :: error
+
+    alength = len(actual)
+    elength = len(expected)
+
+    if (alength .ne. elength) then
+      call build_error_body("String length mismatch", actual, expected, alength, elength, error)
+      call display_failed_message(error)
+      failed = failed + 1
+    else if (actual .ne. expected) then
+      call build_error_body("String mismatch", actual, expected, alength, elength, error)
+      call display_failed_message(error)
+      failed = failed + 1
+    else
+      print *, PASSMSG
+    end if
+  end subroutine
+
 end module VerySimpleTestFramework

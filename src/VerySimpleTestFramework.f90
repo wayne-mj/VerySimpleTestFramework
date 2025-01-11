@@ -5,7 +5,7 @@ module VerySimpleTestFramework
   private 
   
   public :: suite, test, results, &
-            assert_equals
+            assert_equals, assert_contains
   
   !> Required constant parameters
   character(len=1), parameter     :: cr   = char(13)      ! Carriage return
@@ -453,5 +453,41 @@ contains
       print *, PASSMSG
     end if
   end subroutine
+
+  !>---------------------------------------------------------------------------------------------------<!
+
+  !> Test is an actual CHARACTER string and expected CHARACTER string contain a string pattern
+  subroutine assert_contains(actual, expected)
+    character(*), intent(in)  :: actual, expected
+    type(error_msg_type)      :: error
+    integer                   :: alength, elength, i
+    logical                   :: found
+
+    found = .false.
+    alength = len(actual)
+    elength = len(expected)
+
+    ! print *, alength, elength
+
+    do i=1, alength-elength+1
+      ! print *, i, actual, "*", actual(i:i+elength-1), "*",  expected, "*"
+      if (actual(i:i+elength-1) .eq. expected) then
+        found = .true.
+        exit
+      else 
+        found = .false.
+      end if
+    end do
+
+    if (.not. found) then
+      call build_error_body("Pattern not found", actual, expected, alength, elength, error)
+      call display_failed_message(error)
+      failed = failed + 1
+    else 
+      print *, PASSMSG
+    end if
+  end subroutine
+
+  !>---------------------------------------------------------------------------------------------------<!
 
 end module VerySimpleTestFramework

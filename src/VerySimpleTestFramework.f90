@@ -6,7 +6,8 @@ module VerySimpleTestFramework
   
   public :: suite, test, results, &
             assert_pass, assert_fail, &
-            assert_equals, assert_contains
+            assert_equals, assert_contains, &
+            assert_true, assert_false
   
   !> Required constant parameters
   character(len=1), parameter     :: cr   = char(13)      ! Carriage return
@@ -512,4 +513,36 @@ contains
   end subroutine
 
   !>---------------------------------------------------------------------------------------------------<!
+
+  !> Test that actual LOGICAL is true
+  subroutine assert_true(actual)
+    logical, intent(in)     :: actual
+    logical                 :: expected = .true.
+    type(error_msg_type)    :: error 
+
+    if (.not. actual) then
+      call build_error_body("Failed logic", actual, expected, error)
+      call display_failed_message(error)
+      failed = failed + 1
+    else 
+      print *, PASSMSG
+    end if
+  end subroutine
+
+  !> Test that actual LOGICAL is false
+  subroutine assert_false(actual)
+    logical, intent(in)   :: actual
+    logical               :: expected = .false.
+    type(error_msg_type)  :: error 
+
+    if (actual) then
+      call build_error_body("Failed logic", actual, expected, error)
+      call display_failed_message(error)
+      failed = failed + 1
+    else 
+      print *, PASSMSG
+    end if
+  end subroutine
+
+  ! !>---------------------------------------------------------------------------------------------------<!
 end module VerySimpleTestFramework

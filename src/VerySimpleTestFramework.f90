@@ -8,7 +8,7 @@ module VerySimpleTestFramework
             assert_pass, assert_fail, &
             assert_equals, assert_contains, &
             assert_true, assert_false, &
-            assert_zero
+            assert_zero, assert_not_zero
   
   !> Required constant parameters
   character(len=1), parameter     :: cr   = char(13)              ! Carriage return
@@ -101,6 +101,12 @@ module VerySimpleTestFramework
     module procedure  assert_zero_int, &
                       assert_zero_real, &
                       assert_zero_complex
+  end interface
+
+  interface assert_not_zero
+    module procedure  assert_not_zero_int, &
+                      assert_not_zero_real, &
+                      assert_not_zero_complex
   end interface
 
 contains

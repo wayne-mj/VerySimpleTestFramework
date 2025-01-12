@@ -6,6 +6,7 @@ program check
     use check_assertbasemod
     use check_assertlogicalmod
     use check_assertzeromod
+    use check_assertnotzeromod
     use VerySimpleTestFramework
     implicit none
 
@@ -15,5 +16,6 @@ program check
     call check_assertcontains()
     call check_assertlogical()
     call check_assertzero()
+    call check_assertnotzero()
 
 end program check

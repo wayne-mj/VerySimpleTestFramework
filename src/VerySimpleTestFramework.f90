@@ -491,10 +491,12 @@ contains
 
   !>---------------------------------------------------------------------------------------------------<!
 
+  !> Always pass test
   subroutine assert_pass()
     print *, PASSMSG
   end subroutine
 
+  !> Always fails test
   subroutine assert_fail()
     character(len=6)      :: actual = "Actual"
     character(len=8)      :: expected = "Expected"

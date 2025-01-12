@@ -5,6 +5,7 @@ module VerySimpleTestFramework
   private 
   
   public :: suite, test, results, &
+            assert_pass, assert_fail, &
             assert_equals, assert_contains
   
   !> Required constant parameters
@@ -490,4 +491,23 @@ contains
 
   !>---------------------------------------------------------------------------------------------------<!
 
+  subroutine assert_pass()
+    print *, PASSMSG
+  end subroutine
+
+  subroutine assert_fail()
+    character(len=6)      :: actual = "Actual"
+    character(len=8)      :: expected = "Expected"
+    integer               :: alength, elength
+    type(error_msg_type)  :: error
+
+    alength = len(actual)
+    elength = len(expected)
+
+    call build_error_body("Failed by choice", actual, expected, alength, elength, error)
+    call display_failed_message(error)
+    failed = failed + 1
+  end subroutine
+
+  !>---------------------------------------------------------------------------------------------------<!
 end module VerySimpleTestFramework

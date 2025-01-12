@@ -6,7 +6,7 @@ module check_assertcontainsmod
 
     contains
     subroutine check_assertcontains()
-        call suite("Assert Equals")
+        call suite("Assert Contains")
         
         call test("Hello World contains World")
         call assert_contains("Hello World", "World")

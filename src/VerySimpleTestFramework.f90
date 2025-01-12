@@ -7,7 +7,8 @@ module VerySimpleTestFramework
   public :: suite, test, results, &
             assert_pass, assert_fail, &
             assert_equals, assert_contains, &
-            assert_true, assert_false
+            assert_true, assert_false, &
+            assert_zero
   
   !> Required constant parameters
   character(len=1), parameter     :: cr   = char(13)              ! Carriage return
@@ -94,6 +95,12 @@ module VerySimpleTestFramework
                       assert_equals_complex, &
                       assert_equals_int, & 
                       assert_equals_str    
+  end interface
+
+  interface assert_zero
+    module procedure  assert_zero_int, &
+                      assert_zero_real, &
+                      assert_zero_complex
   end interface
 
 contains
@@ -544,6 +551,112 @@ contains
       print *, PASSMSG
     end if
   end subroutine
+
+  ! !>---------------------------------------------------------------------------------------------------<!
+
+  !> Test that actual INTEGER is zero
+  subroutine assert_zero_int(actual)
+    integer, intent(in)   :: actual
+    integer               :: expected = 0, tol = 0
+    type(error_msg_type)  :: error 
+
+    if (actual .ne. 0) then
+      call build_error_body("Non zero", actual, expected, tol, error)
+      error%show_tol=.false.
+      call display_failed_message(error)
+      failed =  failed + 1
+    else
+      print *, PASSMSG
+    end if
+  end subroutine
+
+  !> Test that actual REAL is zero.
+  subroutine assert_zero_real(actual)
+    real, intent(in)      :: actual
+    real                  :: expected = 0., tol = 0.
+    type(error_msg_type)  :: error
+
+    if (actual .ne. 0.) then
+      call build_error_body("Non zero", actual, expected, tol, error)
+      error%show_tol=.false.
+      call display_failed_message(error)
+      failed =  failed + 1
+    else
+      print *, PASSMSG
+    end if
+  end subroutine
+
+  !> Test that actual COMPLEX is (zero.,zero.)
+  subroutine assert_zero_complex(actual)
+    complex, intent(in)   :: actual
+    complex               :: expected = (0.,0.)
+    real                  :: tol = 0.
+    type(error_msg_type)  :: error 
+
+    if (real(actual) .ne. 0.) then
+      call build_error_body("Non zero", actual, expected, tol, error)
+      error%show_tol=.false.
+      call display_failed_message(error)
+      failed =  failed + 1
+    else if(aimag(actual) .ne. 0.) then
+      call build_error_body("Non zero", actual, expected, tol, error)
+      error%show_tol=.false.
+      call display_failed_message(error)
+      failed =  failed + 1
+    else
+      print *, PASSMSG
+    end if
+  end subroutine
+
+  ! !> Test that actual INTEGER is NOT zero
+  subroutine assert_not_zero_int(actual)
+    integer, intent(in)   :: actual
+    type(error_msg_type)  :: error 
+
+    if (actual .eq. 0) then
+      call build_error_body("Zero", actual, -1, 0, error)
+      error%show_tol=.false.
+      call display_failed_message(error)
+      failed =  failed + 1
+    else
+      print *, PASSMSG
+    end if
+  end subroutine
+
+  !> Test that actual REAL is NOT zero.
+  subroutine assert_not_zero_real(actual)
+    real, intent(in)      :: actual
+    type(error_msg_type)  :: error
+
+    if (actual .eq. 0.) then
+      call build_error_body("Zero", actual, -1., 0., error)
+      error%show_tol=.false.
+      call display_failed_message(error)
+      failed =  failed + 1
+    else
+      print *, PASSMSG
+    end if
+  end subroutine  
+
+  !> Test that actual COMPLEX is NOT (zero.,zero.)
+  subroutine assert_not_zero_complex(actual)
+    complex, intent(in)   :: actual
+    type(error_msg_type)  :: error
+
+    if (real(actual) .eq. 0.) then
+      call build_error_body("Zero", actual, (-1.,-1), 0., error)
+      error%show_tol=.false.
+      call display_failed_message(error)
+      failed =  failed + 1
+    else if (aimag(actual) .eq. 0.) then
+      call build_error_body("Zero", actual, (-1.,-1), 0., error)
+      error%show_tol=.false.
+      call display_failed_message(error)
+      failed =  failed + 1
+    else
+      print *, PASSMSG
+    end if
+  end subroutine  
 
   ! !>---------------------------------------------------------------------------------------------------<!
 end module VerySimpleTestFramework

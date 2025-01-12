@@ -10,11 +10,12 @@ module VerySimpleTestFramework
             assert_true, assert_false
   
   !> Required constant parameters
-  character(len=1), parameter     :: cr   = char(13)      ! Carriage return
-  character(len=1), parameter     :: lf   = char(10)      ! Line feed
-  character(len=1), parameter     :: ESC  = char(27)      ! Escape
-  character(len=1), parameter     :: TAB  = char(9)       ! Horizontal Tab
-  character(len=1), parameter     :: NULL = char(0)       ! Null
+  character(len=1), parameter     :: cr   = char(13)              ! Carriage return
+  character(len=1), parameter     :: lf   = char(10)              ! Line feed
+  character(len=1), parameter     :: ESC  = char(27)              ! Escape
+  character(len=1), parameter     :: TAB  = char(9)               ! Horizontal Tab
+  character(len=1), parameter     :: NULL = char(0)               ! Null
+  character(len=3), parameter     :: SPC  = "   "  ! CR/LF and 3 Spaces
   
   !> ANSI Colour codes
   character(len=5), parameter     :: cred     = ESC // "[31m "
@@ -24,11 +25,11 @@ module VerySimpleTestFramework
   character(len=5), parameter     :: cyellow  = ESC // "[93m "
 
   !> Predefined messages and feedback
-  character(len=20), parameter    :: FAILEDMSG  =  cred   //  TAB   // "X FAILED"       // cclear
-  character(len=13), parameter    :: EXPMSG     =             TAB   // "  Expected: "
-  character(len=13), parameter    :: ACTMSG     =             TAB   // "    Actual: "
-  character(len=13), parameter    :: TOLMSG     =             TAB   // " Tolerance: "
-  character(len=20), parameter    :: PASSMSG    =  cgreen //  TAB   // "✓ PASSED"       // cclear
+  character(len=22), parameter    :: FAILEDMSG  =  cr // cred   //  SPC   // "X FAILED"       // cclear
+  character(len=16), parameter    :: EXPMSG     =                   SPC   // "  Expected: "
+  character(len=16), parameter    :: ACTMSG     =                   SPC   // "    Actual: "
+  character(len=16), parameter    :: TOLMSG     =                   SPC   // " Tolerance: "
+  character(len=22), parameter    :: PASSMSG    =  cr // cgreen //  SPC   // "✓ PASSED"       // cclear
 
   integer, parameter  ::  AEIF  =   1       ! Assert Integer Fail
   integer, parameter  ::  AERF  =   2       !        Real

@@ -8,7 +8,8 @@ module VerySimpleTestFramework
             assert_pass, assert_fail, &
             assert_equals, assert_contains, &
             assert_true, assert_false, &
-            assert_zero, assert_not_zero
+            assert_zero, assert_not_zero, &
+            assert_non_zero_length, assert_zero_length 
   
   !> Required constant parameters
   character(len=1), parameter     :: cr   = char(13)              ! Carriage return
@@ -665,4 +666,40 @@ contains
   end subroutine  
 
   ! !>---------------------------------------------------------------------------------------------------<!
+
+  !> Test that actual CHARACTER string is zero length
+  subroutine assert_zero_length(actual)
+    character(*), intent(in)  :: actual
+    integer                   :: alength, elength
+    type(error_msg_type)      :: error
+
+    alength = len(actual)
+    elength = 0
+
+    if (alength .gt. 0) then
+      call build_error_body("Expected zero length string", actual, "", alength, elength, error)
+      call display_failed_message(error)
+      failed = failed + 1
+    else 
+      print *, PASSMSG
+    end if
+  end subroutine
+
+  !> Test that actual CHARACTER string is not zero length
+  subroutine assert_non_zero_length(actual)
+    character(*), intent(in)  :: actual
+    integer                   :: alength, elength
+    type(error_msg_type)      :: error
+
+    alength = len(actual)
+    elength = 32
+
+    if (alength .eq. 0) then
+      call build_error_body("Expected non zero length string", actual, "Expected anything but nothing", alength, elength, error)
+      call display_failed_message(error)
+      failed = failed + 1
+    else 
+      print *, PASSMSG
+    end if
+  end subroutine
 end module VerySimpleTestFramework

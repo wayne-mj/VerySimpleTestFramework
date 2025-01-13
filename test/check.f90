@@ -7,6 +7,7 @@ program check
     use check_assertlogicalmod
     use check_assertzeromod
     use check_assertnotzeromod
+    use check_assertzerolengthmod
     use VerySimpleTestFramework
     implicit none
 
@@ -17,5 +18,6 @@ program check
     call check_assertlogical()
     call check_assertzero()
     call check_assertnotzero()
+    call check_assertzerolength()
 
 end program check

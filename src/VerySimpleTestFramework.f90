@@ -12,7 +12,8 @@ module VerySimpleTestFramework
             assert_non_zero_length, assert_zero_length, &
             assert_is_null, assert_is_not_null, &
             assert_less_than, assert_greater_than, &
-            assert_less_equal, assert_greater_equal
+            assert_less_equal, assert_greater_equal, &
+            assert_is_positive, assert_is_negative
   
   !> Required constant parameters
   character(len=1), parameter     :: cr   = char(13)              ! Carriage return
@@ -136,7 +137,19 @@ module VerySimpleTestFramework
     module procedure  assert_is_greater_equal_int, &
                       assert_is_greater_equal_complex, &
                       assert_is_greater_equal_real
-  end interface  
+  end interface
+
+  interface assert_is_positive
+    module procedure  assert_is_positive_int, &
+                      assert_is_positive_real, &
+                      assert_is_positive_complex
+  end interface
+
+  interface assert_is_negative
+    module procedure  assert_is_negative_int, &
+                      assert_is_negative_real, &
+                      assert_is_negative_complex
+  end interface
 
 contains
   !>---------------------------------------------------------------------------------------------------<!
@@ -1012,5 +1025,157 @@ contains
       print *, PASSMSG
     end if
   end subroutine
+
+  !>---------------------------------------------------------------------------------------------------<!
+
+  !> Test to assert if actual INTEGER is positive
+  subroutine assert_is_positive_int(actual)
+    integer, intent(in)   :: actual
+    integer               :: expected = 0
+    type(error_msg_type)  :: error
+
+    if (actual .eq. expected) then
+      call build_error_body("Actual equals Zero", actual, expected, 0, error)
+      error%show_tol = .false.
+      error%show_exp = .false.
+      call display_failed_message(error)
+    else if (actual .lt. expected) then
+      call build_error_body("Actual not positive", actual, expected, 0, error)
+      error%show_tol = .false.
+      error%show_exp = .false.
+      call display_failed_message(error)
+    else 
+      print *, PASSMSG
+    end if
+  end subroutine
+
+  !> Test to assert if actual REAL is positive
+  subroutine assert_is_positive_real(actual)
+    real, intent(in)   :: actual
+    real               :: expected = 0.
+    type(error_msg_type)  :: error
+
+    if (actual .eq. expected) then
+      call build_error_body("Actual equals Zero", actual, expected, 0., error)
+      error%show_tol = .false.
+      error%show_exp = .false.
+      call display_failed_message(error)
+    else if (actual .lt. expected) then
+      call build_error_body("Actual not positive", actual, expected, 0., error)
+      error%show_tol = .false.
+      error%show_exp = .false.
+      call display_failed_message(error)
+    else 
+      print *, PASSMSG
+    end if
+  end subroutine
+
+  !> Test to assert if actual COMPLEX is positive
+  subroutine assert_is_positive_complex(actual)
+    complex, intent(in)   :: actual
+    complex               :: expected = (0.,0.)
+    type(error_msg_type)  :: error
+
+    if (real(actual) .eq. real(expected)) then
+      call build_error_body("Real Actual equals Zero", actual, expected, 0., error)
+      error%show_tol = .false.
+      error%show_exp = .false.
+      call display_failed_message(error)
+    else if (real(actual) .lt. real(expected)) then
+      call build_error_body("Real Actual not positive", actual, expected, 0., error)
+      error%show_tol = .false.
+      error%show_exp = .false.
+      call display_failed_message(error)
+    else if (aimag(actual) .eq. aimag(expected)) then
+      call build_error_body("Imagine Actual equals Zero", actual, expected, 0., error)
+      error%show_tol = .false.
+      error%show_exp = .false.
+      call display_failed_message(error)
+    else if (aimag(actual) .lt. aimag(expected)) then
+      call build_error_body("Imagine Actual not positive", actual, expected, 0., error)
+      error%show_tol = .false.
+      error%show_exp = .false.
+      call display_failed_message(error)
+    else 
+      print *, PASSMSG
+    end if
+  end subroutine
+
+  !>---------------------------------------------------------------------------------------------------<!
+
+  !> Test to assert if actual INTEGER is negative
+  subroutine assert_is_negative_int(actual)
+    integer, intent(in)   :: actual
+    integer               :: expected = 0
+    type(error_msg_type)  :: error
+
+    if (actual .eq. expected) then
+      call build_error_body("Actual equals Zero", actual, expected, 0, error)
+      error%show_tol = .false.
+      error%show_exp = .false.
+      call display_failed_message(error)
+    else if (actual .gt. expected) then
+      call build_error_body("Actual not positive", actual, expected, 0, error)
+      error%show_tol = .false.
+      error%show_exp = .false.
+      call display_failed_message(error)
+    else 
+      print *, PASSMSG
+    end if
+  end subroutine
+
+  !> Test to assert if actual REAL is negative
+  subroutine assert_is_negative_real(actual)
+    real, intent(in)   :: actual
+    real               :: expected = 0.
+    type(error_msg_type)  :: error
+
+    if (actual .eq. expected) then
+      call build_error_body("Actual equals Zero", actual, expected, 0., error)
+      error%show_tol = .false.
+      error%show_exp = .false.
+      call display_failed_message(error)
+    else if (actual .gt. expected) then
+      call build_error_body("Actual not positive", actual, expected, 0., error)
+      error%show_tol = .false.
+      error%show_exp = .false.
+      call display_failed_message(error)
+    else 
+      print *, PASSMSG
+    end if
+  end subroutine
+
+  !> Test to assert if actual COMPLEX is negative
+  subroutine assert_is_negative_complex(actual)
+    complex, intent(in)   :: actual
+    complex               :: expected = (0.,0.)
+    type(error_msg_type)  :: error
+
+    if (real(actual) .eq. real(expected)) then
+      call build_error_body("Real Actual equals Zero", actual, expected, 0., error)
+      error%show_tol = .false.
+      error%show_exp = .false.
+      call display_failed_message(error)
+    else if (real(actual) .gt. real(expected)) then
+      call build_error_body("Real Actual not positive", actual, expected, 0., error)
+      error%show_tol = .false.
+      error%show_exp = .false.
+      call display_failed_message(error)
+    else if (aimag(actual) .eq. aimag(expected)) then
+      call build_error_body("Imagine Actual equals Zero", actual, expected, 0., error)
+      error%show_tol = .false.
+      error%show_exp = .false.
+      call display_failed_message(error)
+    else if (aimag(actual) .gt. aimag(expected)) then
+      call build_error_body("Imagine Actual not positive", actual, expected, 0., error)
+      error%show_tol = .false.
+      error%show_exp = .false.
+      call display_failed_message(error)
+    else 
+      print *, PASSMSG
+    end if
+  end subroutine
+
+  !>---------------------------------------------------------------------------------------------------<!
 
 end module VerySimpleTestFramework

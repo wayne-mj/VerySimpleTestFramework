@@ -9,6 +9,7 @@ program check
     use check_assertnotzeromod
     use check_assertzerolengthmod
     use check_assertnullmod
+    use check_assertlgemod
     use VerySimpleTestFramework
     implicit none
 
@@ -21,5 +22,6 @@ program check
     call check_assertnotzero()
     call check_assertzerolength()
     call check_assertnull()
+    call check_assertlge()
 
 end program check

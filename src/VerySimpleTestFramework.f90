@@ -10,7 +10,9 @@ module VerySimpleTestFramework
             assert_true, assert_false, &
             assert_zero, assert_not_zero, &
             assert_non_zero_length, assert_zero_length, &
-            assert_is_null, assert_is_not_null
+            assert_is_null, assert_is_not_null, &
+            assert_less_than, assert_greater_than, &
+            assert_less_equal, assert_greater_equal
   
   !> Required constant parameters
   character(len=1), parameter     :: cr   = char(13)              ! Carriage return
@@ -110,6 +112,31 @@ module VerySimpleTestFramework
                       assert_not_zero_real, &
                       assert_not_zero_complex
   end interface
+
+  interface assert_less_than 
+    module procedure  assert_is_less_than_int, &
+                      assert_is_less_than_real, &
+                      assert_is_less_than_complex
+  
+  end interface
+
+  interface assert_greater_than 
+    module procedure  assert_is_greater_than_int, &
+                      assert_is_greater_than_complex, &
+                      assert_is_greater_than_real
+  end interface
+
+  interface assert_less_equal
+    module procedure  assert_is_less_equal_int, &
+                      assert_is_less_equal_complex, &
+                      assert_is_less_equal_real
+  end interface  
+
+  interface assert_greater_equal 
+    module procedure  assert_is_greater_equal_int, &
+                      assert_is_greater_equal_complex, &
+                      assert_is_greater_equal_real
+  end interface  
 
 contains
   !>---------------------------------------------------------------------------------------------------<!
@@ -745,4 +772,207 @@ contains
       print *, PASSMSG
     end if
   end subroutine
+
+  ! !>---------------------------------------------------------------------------------------------------<!
+
+  !> Test if actual INTEGER is less that expected INTEGER
+  subroutine assert_is_less_than_int(actual, expected)
+    integer, intent(in)   :: actual, expected
+    integer               :: tol = 0
+    type(error_msg_type)  :: error 
+
+    if (actual .ge. expected) then
+      call build_error_body("Actual > Expected", actual, expected, tol, error)
+      error%show_tol=.false.
+      call display_failed_message(error)
+      failed = failed + 1
+    else 
+      print *, PASSMSG
+    end if
+  end subroutine
+
+  !> Test if actual REAL is less than expected REAL
+  subroutine assert_is_less_than_real(actual, expected)
+    real, intent(in)      :: actual, expected
+    real                  :: tol = 0
+    type(error_msg_type)  :: error
+
+    if (actual .ge. expected) then
+      call build_error_body("Actual > Expected", actual, expected, tol, error)
+      error%show_tol=.false.
+      call display_failed_message(error)
+      failed = failed + 1
+    else 
+      print *, PASSMSG
+    end if
+  end subroutine
+
+  !> Test if actual COMPLEX is less than expected COMPLEX
+  subroutine assert_is_less_than_complex(actual, expected)
+    complex, intent(in)   :: actual, expected
+    real                  :: tol = 0
+    type(error_msg_type)  :: error 
+
+    if (real(actual) .ge. real(expected)) then
+      call build_error_body("Actual > Expected", actual, expected, tol, error)
+      error%show_tol=.false.
+      call display_failed_message(error)
+      failed = failed + 1
+    else if (aimag(actual) .ge. aimag(expected)) then
+      call build_error_body("Actual > Expected", actual, expected, tol, error)
+      error%show_tol=.false.
+      call display_failed_message(error)
+    else 
+      print *, PASSMSG
+    end if
+  end subroutine
+
+  !> Test if actual INTEGER is greater tha expected INTEGER
+  subroutine assert_is_greater_than_int(actual, expected)
+    integer, intent(in)   :: actual, expected
+    integer               :: tol = 0
+    type(error_msg_type)  :: error
+
+    if (actual .le. expected) then
+      call build_error_body("Actual < Expected", actual, expected, tol, error)
+      error%show_tol = .false.
+      call display_failed_message(error)
+      failed = failed + 1
+    else 
+      print *, PASSMSG
+    end if
+  end subroutine
+
+  !> Test is actual REAL is greater than expected REAL
+  subroutine assert_is_greater_than_real(actual, expected)
+    real, intent(in)      :: actual, expected
+    real                  :: tol = 0
+    type(error_msg_type)  :: error
+
+    if (actual .le. expected) then
+      call build_error_body("Actual < Expected", actual, expected, tol, error)
+      error%show_tol = .false.
+      call display_failed_message(error)
+      failed = failed + 1
+    else 
+      print *, PASSMSG
+    end if
+  end subroutine
+
+  !> Test is actual COMPLEX is greater than expected COMPLEX
+  subroutine assert_is_greater_than_complex(actual, expected)
+    complex, intent(in)   :: actual, expected
+    real                  :: tol = 0
+    type(error_msg_type)  :: error 
+
+    if (real(actual) .le. real(expected)) then
+      call build_error_body("Actual < Expected", actual, expected, tol, error)
+      error%show_tol = .false.
+      call display_failed_message(error)
+      failed = failed + 1
+    else if (aimag(actual) .le. aimag(expected)) then
+      call build_error_body("Actual < Expected", actual, expected, tol, error)
+      error%show_tol = .false.
+      call display_failed_message(error)
+    else 
+      print *, PASSMSG
+    end if
+  end subroutine
+
+  ! !>---------------------------------------------------------------------------------------------------<!
+
+  !> Test if actual INTEGER is less that expected INTEGER
+  subroutine assert_is_less_equal_int(actual, expected, tol)
+    integer, intent(in)   :: actual, expected, tol
+    type(error_msg_type)  :: error
+
+    if ((actual .gt. expected) .and. (abs(actual-expected) .gt. tol)) then
+      call build_error_body("Actual > or != Expected", actual, expected, tol, error)
+      call display_failed_message(error)
+      failed = failed + 1
+    else 
+      print *, PASSMSG
+    end if
+  end subroutine
+
+  !> Test if actual REAL is less than expected REAL
+  subroutine assert_is_less_equal_real(actual, expected, tol)
+    real, intent(in)      :: actual, expected, tol
+    type(error_msg_type)  :: error
+
+    if ((actual .gt. expected) .and. (abs(actual-expected) .gt. tol)) then
+      call build_error_body("Actual > or != Expected", actual, expected, tol, error)
+      call display_failed_message(error)
+      failed = failed + 1
+    else 
+      print *, PASSMSG
+    end if
+  end subroutine
+
+  !> Test if actual COMPLEX is less than expected COMPLEX
+  subroutine assert_is_less_equal_complex(actual, expected, tol)
+    complex, intent(in)   :: actual, expected
+    real, intent(in)      :: tol
+    type(error_msg_type)  :: error
+
+    if ((real(actual) .gt. real(expected)) .and. (abs(real(actual)-real(expected)) .gt. tol)) then
+      call build_error_body("Actual > or != Expected", actual, expected, tol, error)
+      call display_failed_message(error)
+      failed = failed + 1
+    else if ((aimag(actual) .gt. aimag(expected)) .and. (abs(aimag(actual)-aimag(expected)) .gt. tol)) then
+      call build_error_body("Actual > or != Expected", actual, expected, tol, error)
+      call display_failed_message(error)
+    else 
+      print *, PASSMSG
+    end if
+  end subroutine
+
+  !> Test if actual INTEGER is greater tha expected INTEGER
+  subroutine assert_is_greater_equal_int(actual, expected, tol)
+    integer, intent(in)   :: actual, expected, tol
+    type(error_msg_type)  :: error
+
+    if ((actual .lt. expected) .and. (abs(actual-expected) .gt. tol)) then
+      call build_error_body("Actual < or != Expected", actual, expected, tol, error)
+      call display_failed_message(error)
+      failed = failed + 1
+    else 
+      print *, PASSMSG
+    end if
+  end subroutine
+
+  !> Test is actual REAL is greater than expected REAL
+  subroutine assert_is_greater_equal_real(actual, expected, tol)
+    real, intent(in)      :: actual, expected, tol
+    type(error_msg_type)  :: error
+
+    if ((actual .lt. expected) .and. (abs(actual-expected) .gt. tol)) then
+      call build_error_body("Actual < or != Expected", actual, expected, tol, error)
+      call display_failed_message(error)
+      failed = failed + 1
+    else 
+      print *, PASSMSG
+    end if
+  end subroutine
+
+  !> Test is actual COMPLEX is greater than expected COMPLEX
+  subroutine assert_is_greater_equal_complex(actual, expected, tol)
+    complex, intent(in)   :: actual, expected
+    real, intent(in)      :: tol
+    type(error_msg_type)  :: error 
+
+    if ((real(actual) .lt. real(expected)) .and. (abs(real(actual) - real(expected)) .gt. tol) ) then
+      !call display_failed("", actual, expected, tol)
+      call build_error_body("Actual < or != Expected", actual, expected, tol, error)
+      call display_failed_message(error)
+      failed = failed + 1
+    else if ((aimag(actual) .lt. aimag(expected)) .and. (abs(aimag(actual) - aimag(expected)) .gt. tol) ) then
+      !call display_failed("", actual, expected, tol)
+      call build_error_body("Actual < or != Expected", actual, expected, tol, error)
+      call display_failed_message(error)
+    else 
+      print *, PASSMSG
+    end if
+  end subroutine
+
 end module VerySimpleTestFramework

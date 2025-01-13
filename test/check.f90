@@ -8,6 +8,7 @@ program check
     use check_assertzeromod
     use check_assertnotzeromod
     use check_assertzerolengthmod
+    use check_assertnullmod
     use VerySimpleTestFramework
     implicit none
 
@@ -19,5 +20,6 @@ program check
     call check_assertzero()
     call check_assertnotzero()
     call check_assertzerolength()
+    call check_assertnull()
 
 end program check

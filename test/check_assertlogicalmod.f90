@@ -8,17 +8,17 @@ module check_assertlogicalmod
     subroutine check_assertlogical()
         call suite("Assert True/False")
 
-        call test("True is True")
+        call test("Assert True: True is True")
         call assert_true(.true.)
 
-        call test("False is True")
+        call test("Assert True: False is True")
         call assert_true(.false.)
 
 
-        call test("False is False")
+        call test("Assert False: False is False")
         call assert_false(.false.)
 
-        call test("True is False")
+        call test("Assert False: True is False")
         call assert_false(.true.)
         
         call results()

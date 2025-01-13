@@ -781,8 +781,13 @@ contains
     integer               :: tol = 0
     type(error_msg_type)  :: error 
 
-    if (actual .ge. expected) then
+    if (actual .gt. expected) then
       call build_error_body("Actual > Expected", actual, expected, tol, error)
+      error%show_tol=.false.
+      call display_failed_message(error)
+      failed = failed + 1
+    else if (actual .eq. expected) then
+      call build_error_body("Actual = Expected", actual, expected, tol, error)
       error%show_tol=.false.
       call display_failed_message(error)
       failed = failed + 1
@@ -797,8 +802,13 @@ contains
     real                  :: tol = 0
     type(error_msg_type)  :: error
 
-    if (actual .ge. expected) then
+    if (actual .gt. expected) then
       call build_error_body("Actual > Expected", actual, expected, tol, error)
+      error%show_tol=.false.
+      call display_failed_message(error)
+      failed = failed + 1
+    else if(actual .eq. expected) then
+      call build_error_body("Actual = Expected", actual, expected, tol, error)
       error%show_tol=.false.
       call display_failed_message(error)
       failed = failed + 1
@@ -813,13 +823,22 @@ contains
     real                  :: tol = 0
     type(error_msg_type)  :: error 
 
-    if (real(actual) .ge. real(expected)) then
+    if (real(actual) .gt. real(expected)) then
       call build_error_body("Actual > Expected", actual, expected, tol, error)
       error%show_tol=.false.
       call display_failed_message(error)
       failed = failed + 1
-    else if (aimag(actual) .ge. aimag(expected)) then
+    else if (aimag(actual) .gt. aimag(expected)) then
       call build_error_body("Actual > Expected", actual, expected, tol, error)
+      error%show_tol=.false.
+      call display_failed_message(error)
+    else if (real(actual) .eq. real(expected)) then
+      call build_error_body("Actual = Expected", actual, expected, tol, error)
+      error%show_tol=.false.
+      call display_failed_message(error)
+      failed = failed + 1
+    else if (aimag(actual) .eq. aimag(expected)) then
+      call build_error_body("Actual = Expected", actual, expected, tol, error)
       error%show_tol=.false.
       call display_failed_message(error)
     else 
@@ -833,8 +852,13 @@ contains
     integer               :: tol = 0
     type(error_msg_type)  :: error
 
-    if (actual .le. expected) then
+    if (actual .lt. expected) then
       call build_error_body("Actual < Expected", actual, expected, tol, error)
+      error%show_tol = .false.
+      call display_failed_message(error)
+      failed = failed + 1
+    else if (actual .eq. expected) then
+      call build_error_body("Actual = Expected", actual, expected, tol, error)
       error%show_tol = .false.
       call display_failed_message(error)
       failed = failed + 1
@@ -849,8 +873,13 @@ contains
     real                  :: tol = 0
     type(error_msg_type)  :: error
 
-    if (actual .le. expected) then
+    if (actual .lt. expected) then
       call build_error_body("Actual < Expected", actual, expected, tol, error)
+      error%show_tol = .false.
+      call display_failed_message(error)
+      failed = failed + 1
+    else if (actual .eq. expected) then
+      call build_error_body("Actual = Expected", actual, expected, tol, error)
       error%show_tol = .false.
       call display_failed_message(error)
       failed = failed + 1
@@ -865,13 +894,22 @@ contains
     real                  :: tol = 0
     type(error_msg_type)  :: error 
 
-    if (real(actual) .le. real(expected)) then
+    if (real(actual) .lt. real(expected)) then
       call build_error_body("Actual < Expected", actual, expected, tol, error)
       error%show_tol = .false.
       call display_failed_message(error)
       failed = failed + 1
-    else if (aimag(actual) .le. aimag(expected)) then
+    else if (aimag(actual) .lt. aimag(expected)) then
       call build_error_body("Actual < Expected", actual, expected, tol, error)
+      error%show_tol = .false.
+      call display_failed_message(error)
+    else if (real(actual) .eq. real(expected)) then
+      call build_error_body("Actual = Expected", actual, expected, tol, error)
+      error%show_tol = .false.
+      call display_failed_message(error)
+      failed = failed + 1
+    else if (aimag(actual) .eq. aimag(expected)) then
+      call build_error_body("Actual = Expected", actual, expected, tol, error)
       error%show_tol = .false.
       call display_failed_message(error)
     else 

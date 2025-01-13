@@ -9,7 +9,8 @@ module VerySimpleTestFramework
             assert_equals, assert_contains, &
             assert_true, assert_false, &
             assert_zero, assert_not_zero, &
-            assert_non_zero_length, assert_zero_length 
+            assert_non_zero_length, assert_zero_length, &
+            assert_is_null, assert_is_not_null
   
   !> Required constant parameters
   character(len=1), parameter     :: cr   = char(13)              ! Carriage return
@@ -696,6 +697,48 @@ contains
 
     if (alength .eq. 0) then
       call build_error_body("Expected non zero length string", actual, "Expected anything but nothing", alength, elength, error)
+      call display_failed_message(error)
+      failed = failed + 1
+    else 
+      print *, PASSMSG
+    end if
+  end subroutine
+
+  ! !>---------------------------------------------------------------------------------------------------<!
+
+  !> Test that actual CHARACTER is NULL
+  subroutine assert_is_null(actual)
+    character(*), intent(in)  :: actual
+    character(len=0)          :: expected = NULL
+    type(stringtype)          :: strdata
+    integer                   :: alength, elength
+    type(error_msg_type)      :: error
+
+    alength = len(actual)
+    elength = len(expected)
+
+    if (actual .ne. NULL)  then
+      call build_error_body("Expected NULL", actual, expected, alength, elength, error)
+      call display_failed_message(error)
+      failed = failed + 1
+    else 
+      print *, PASSMSG
+    end if
+  end subroutine
+
+  !> Test that actual CHARACTER is NOT NULL
+  subroutine assert_is_not_null(actual)
+    character(*), intent(in)  :: actual
+    character(len=32)         :: expected = "Non NULL string"
+    type(stringtype)          :: strdata
+    type(error_msg_type)      :: error
+    integer                   :: alength, elength
+
+    alength = len(actual)
+    elength = len(expected)
+
+    if (actual .eq. NULL) then
+      call build_error_body("Expected non-NULL", actual, expected, alength, elength, error)
       call display_failed_message(error)
       failed = failed + 1
     else 

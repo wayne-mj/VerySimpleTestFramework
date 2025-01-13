@@ -8,10 +8,10 @@ module check_assertbasemod
     subroutine check_assertbase()
         call suite("Assert Pass/Fail")
 
-        call test("Pass")
+        call test("Assert Pass")
         call assert_pass()
 
-        call test("Fail")
+        call test("Assert Fail")
         call assert_fail()
         
         call results()

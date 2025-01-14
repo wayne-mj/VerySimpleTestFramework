@@ -31,11 +31,11 @@ module VerySimpleTestFramework
   character(len=5), parameter     :: cyellow  = ESC // "[93m "
 
   !> Predefined messages and feedback
-  character(len=22), parameter    :: FAILEDMSG  =  cr // cred   //  SPC   // "X FAILED"       // cclear
+  character(len=23), parameter    :: FAILEDMSG  =  cr // cred   //  SPC   // "X FAILED"       // cclear
   character(len=16), parameter    :: EXPMSG     =                   SPC   // "  Expected: "
   character(len=16), parameter    :: ACTMSG     =                   SPC   // "    Actual: "
   character(len=16), parameter    :: TOLMSG     =                   SPC   // " Tolerance: "
-  character(len=22), parameter    :: PASSMSG    =  cr // cgreen //  SPC   // "✓ PASSED"       // cclear
+  character(len=23), parameter    :: PASSMSG    =  cr // cgreen //  SPC   // "✓ PASSED"       // cclear
 
   integer, parameter  ::  AEIF  =   1       ! Assert Integer Fail
   integer, parameter  ::  AERF  =   2       !        Real
@@ -184,8 +184,8 @@ contains
     
     call system_clock(finish_time)
     total_time = ((finish_time - start_time) / real(c_r))
-    print *, "Summary: ", total_tests, " tests, ", failed, " failed."
-    print *, "Total time in sec: ", total_time
+    print *, cr // lf // "Summary: ", total_tests, " tests, ", failed, " failed."
+    print *, cr // lf // "Total time in sec: ", total_time
   end subroutine
   !>---------------------------------------------------------------------------------------------------<!
   

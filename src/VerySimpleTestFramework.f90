@@ -35,7 +35,6 @@ module VerySimpleTestFramework
   character(len=16), parameter    :: EXPMSG     =                   SPC   // "  Expected: "
   character(len=16), parameter    :: ACTMSG     =                   SPC   // "    Actual: "
   character(len=16), parameter    :: TOLMSG     =                   SPC   // " Tolerance: "
-  !character(len=23), parameter    :: PASSMSG    =  cr // cgreen //  SPC   // "✓ PASSED"       // cclear
   character(len=10), parameter    :: PASSMSG    =  "✓ PASSED"
 
   integer, parameter  ::  AEIF  =   1       ! Assert Integer Fail

@@ -505,6 +505,7 @@ contains
     if ((abs(real(actual) - real(expected)) .gt. tol) .and. (abs(aimag(actual)-aimag(expected)) .gt. tol)) then
       call build_error_body("Complex Real and Imaginary Inequality", actual, expected, tol, error)
       call display_failed_message(error)
+      failed = failed + 1
     else if (abs(real(actual) - real(expected)) .gt. tol) then
       call build_error_body("Complex Real Inequality", actual, expected, tol, error)
       call display_failed_message(error)
@@ -873,6 +874,7 @@ contains
       call build_error_body("Actual > Expected", actual, expected, tol, error)
       error%show_tol=.false.
       call display_failed_message(error)
+      failed = failed + 1
     else if (real(actual) .eq. real(expected)) then
       call build_error_body("Actual = Expected", actual, expected, tol, error)
       error%show_tol=.false.
@@ -882,6 +884,7 @@ contains
       call build_error_body("Actual = Expected", actual, expected, tol, error)
       error%show_tol=.false.
       call display_failed_message(error)
+      failed = failed + 1
     else 
       print *, PASSMSG
     end if
@@ -944,15 +947,18 @@ contains
       call build_error_body("Actual < Expected", actual, expected, tol, error)
       error%show_tol = .false.
       call display_failed_message(error)
+      failed = failed + 1
     else if (real(actual) .eq. real(expected)) then
       call build_error_body("Actual = Expected", actual, expected, tol, error)
       error%show_tol = .false.
       call display_failed_message(error)
       failed = failed + 1
+      !failed = failed + 1
     else if (aimag(actual) .eq. aimag(expected)) then
       call build_error_body("Actual = Expected", actual, expected, tol, error)
       error%show_tol = .false.
       call display_failed_message(error)
+      failed = failed + 1
     else 
       print *, PASSMSG
     end if
@@ -1001,6 +1007,7 @@ contains
     else if ((aimag(actual) .gt. aimag(expected)) .and. (abs(aimag(actual)-aimag(expected)) .gt. tol)) then
       call build_error_body("Actual > or != Expected", actual, expected, tol, error)
       call display_failed_message(error)
+      failed = failed + 1
     else 
       print *, PASSMSG
     end if
@@ -1049,6 +1056,7 @@ contains
       !call display_failed("", actual, expected, tol)
       call build_error_body("Actual < or != Expected", actual, expected, tol, error)
       call display_failed_message(error)
+      failed = failed + 1
     else 
       print *, PASSMSG
     end if

@@ -11,8 +11,8 @@ module check_assertbasemod
         call test("Assert Pass")
         call assert_pass()
 
-        ! call test("Assert Fail")
-        ! call assert_fail()
+        call test("Assert Fail")
+        call assert_fail()
         
         call results()
     end subroutine

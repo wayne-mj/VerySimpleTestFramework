@@ -48,8 +48,9 @@ module VerySimpleTestFramework
   integer :: total_tests          ! = 0
 
   !> Variables for tracking the start and finish times and related time seeds.
-  integer(int64) :: start_time    ! = 0
-  integer(int64) :: finish_time   ! = 0
+  !integer(int64) :: start_time    ! = 0
+  !integer(int64) :: finish_time   ! = 0
+  real            :: start_time, finish_time
   integer(int64) :: c, c_r, cm
 
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -165,8 +166,9 @@ contains
     start_time = 0
     finish_time = 0
 
-    call system_clock(c, c_r, cm)
-    call system_clock(start_time)
+    !call system_clock(c, c_r, cm)
+    !call system_clock(start_time)
+    call cpu_time(start_time)
   end subroutine
 
   !> Used to signpost each of the tests
@@ -182,10 +184,15 @@ contains
   subroutine results()
     real :: total_time = 0.
     
-    call system_clock(finish_time)
-    total_time = ((finish_time - start_time) / real(c_r))
-    print *, cr // lf // "Summary: ", total_tests, " tests, ", failed, " failed."
-    print *, cr // lf // "Total time in sec: ", total_time
+    !call system_clock(finish_time)
+    call cpu_time(finish_time)
+    !total_time = ((finish_time - start_time) / real(c_r))
+    total_time = (finish_time - start_time) * 1000.
+    !print *, cr // lf // "Summary: ", total_tests, " tests, ", failed, " failed."
+    print '("Summary: ", I10, " tests,", I10, " failed.")', total_tests, failed
+    !print *, cr // lf // "Total time in sec: ",total_time
+    print '("Total time in ms: ", F10.3)', total_time
+    !print '(F10.6)', total_time
   end subroutine
   !>---------------------------------------------------------------------------------------------------<!
   
@@ -1060,11 +1067,13 @@ contains
       error%show_tol = .false.
       error%show_exp = .false.
       call display_failed_message(error)
+      failed = failed + 1
     else if (actual .lt. expected) then
       call build_error_body("Actual not positive", actual, expected, 0, error)
       error%show_tol = .false.
       error%show_exp = .false.
       call display_failed_message(error)
+      failed = failed + 1
     else 
       print *, PASSMSG
     end if
@@ -1081,11 +1090,13 @@ contains
       error%show_tol = .false.
       error%show_exp = .false.
       call display_failed_message(error)
+      failed = failed + 1
     else if (actual .lt. expected) then
       call build_error_body("Actual not positive", actual, expected, 0., error)
       error%show_tol = .false.
       error%show_exp = .false.
       call display_failed_message(error)
+      failed = failed + 1
     else 
       print *, PASSMSG
     end if
@@ -1102,21 +1113,25 @@ contains
       error%show_tol = .false.
       error%show_exp = .false.
       call display_failed_message(error)
+      failed = failed + 1
     else if (real(actual) .lt. real(expected)) then
       call build_error_body("Real Actual not positive", actual, expected, 0., error)
       error%show_tol = .false.
       error%show_exp = .false.
       call display_failed_message(error)
+      failed = failed + 1
     else if (aimag(actual) .eq. aimag(expected)) then
       call build_error_body("Imagine Actual equals Zero", actual, expected, 0., error)
       error%show_tol = .false.
       error%show_exp = .false.
       call display_failed_message(error)
+      failed = failed + 1
     else if (aimag(actual) .lt. aimag(expected)) then
       call build_error_body("Imagine Actual not positive", actual, expected, 0., error)
       error%show_tol = .false.
       error%show_exp = .false.
       call display_failed_message(error)
+      failed = failed + 1
     else 
       print *, PASSMSG
     end if
@@ -1135,11 +1150,13 @@ contains
       error%show_tol = .false.
       error%show_exp = .false.
       call display_failed_message(error)
+      failed = failed + 1
     else if (actual .gt. expected) then
       call build_error_body("Actual not positive", actual, expected, 0, error)
       error%show_tol = .false.
       error%show_exp = .false.
       call display_failed_message(error)
+      failed = failed + 1
     else 
       print *, PASSMSG
     end if
@@ -1156,11 +1173,13 @@ contains
       error%show_tol = .false.
       error%show_exp = .false.
       call display_failed_message(error)
+      failed = failed + 1
     else if (actual .gt. expected) then
       call build_error_body("Actual not positive", actual, expected, 0., error)
       error%show_tol = .false.
       error%show_exp = .false.
       call display_failed_message(error)
+      failed = failed + 1
     else 
       print *, PASSMSG
     end if
@@ -1177,21 +1196,25 @@ contains
       error%show_tol = .false.
       error%show_exp = .false.
       call display_failed_message(error)
+      failed = failed + 1
     else if (real(actual) .gt. real(expected)) then
       call build_error_body("Real Actual not positive", actual, expected, 0., error)
       error%show_tol = .false.
       error%show_exp = .false.
       call display_failed_message(error)
+      failed = failed + 1
     else if (aimag(actual) .eq. aimag(expected)) then
       call build_error_body("Imagine Actual equals Zero", actual, expected, 0., error)
       error%show_tol = .false.
       error%show_exp = .false.
       call display_failed_message(error)
+      failed = failed + 1
     else if (aimag(actual) .gt. aimag(expected)) then
       call build_error_body("Imagine Actual not positive", actual, expected, 0., error)
       error%show_tol = .false.
       error%show_exp = .false.
       call display_failed_message(error)
+      failed = failed + 1
     else 
       print *, PASSMSG
     end if

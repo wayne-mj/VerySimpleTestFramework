@@ -206,21 +206,42 @@ contains
 
     !> 1, 2, 3 etc ASSERT EQUALS INT, REAL, COMPLEX etc
     !> Assert INTEGER fail
-    if (error%error_cat .eq. AEIF) then
+    ! if (error%error_cat .eq. AEIF) then
+    !   call display_failed_int(error)
+    ! !> Assert REAL fail
+    ! else if (error%error_cat .eq. AERF) then
+    !   call display_failed_real(error)
+    ! !> Assert COMPLEX fail
+    ! else if (error%error_cat .eq. AECF) then
+    !   call display_failed_complex(error)
+    ! !> Assert CHARACTER string fail
+    ! else if (error%error_cat .eq. AESF) then
+    !   call display_failed_str(error)
+    ! !> Assert LOGICAL fail
+    ! else if (error%error_cat .eq. AELF) then
+    !   call display_failed_logical(error)
+    ! end if
+
+    select case(error%error_cat)
+    !> Assert INTEGER fail
+    case(AEIF)
       call display_failed_int(error)
     !> Assert REAL fail
-    else if (error%error_cat .eq. AERF) then
+    case (AERF)
       call display_failed_real(error)
     !> Assert COMPLEX fail
-    else if (error%error_cat .eq. AECF) then
+    case (AECF)
       call display_failed_complex(error)
     !> Assert CHARACTER string fail
-    else if (error%error_cat .eq. AESF) then
+    case (AESF)
       call display_failed_str(error)
     !> Assert LOGICAL fail
-    else if (error%error_cat .eq. AELF) then
+    case (AELF)
       call display_failed_logical(error)
-    end if
+    !> Just in case something else happens, but it shouldn't
+    case DEFAULT
+      print *, "No defined error"
+    end select
   end subroutine
 
   !> Display failed results for values of INTEGERS

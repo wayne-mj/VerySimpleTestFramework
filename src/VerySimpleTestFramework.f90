@@ -35,7 +35,8 @@ module VerySimpleTestFramework
   character(len=16), parameter    :: EXPMSG     =                   SPC   // "  Expected: "
   character(len=16), parameter    :: ACTMSG     =                   SPC   // "    Actual: "
   character(len=16), parameter    :: TOLMSG     =                   SPC   // " Tolerance: "
-  character(len=23), parameter    :: PASSMSG    =  cr // cgreen //  SPC   // "✓ PASSED"       // cclear
+  !character(len=23), parameter    :: PASSMSG    =  cr // cgreen //  SPC   // "✓ PASSED"       // cclear
+  character(len=10), parameter    :: PASSMSG    =  "✓ PASSED"
 
   integer, parameter  ::  AEIF  =   1       ! Assert Integer Fail
   integer, parameter  ::  AERF  =   2       !        Real
@@ -194,6 +195,17 @@ contains
     print '("Total time in ms: ", F10.3)', total_time
     !print '(F10.6)', total_time
   end subroutine
+  !>---------------------------------------------------------------------------------------------------<!
+
+  !> Display the PASS message using string interpolation.
+  subroutine display_passmsg()
+    if (DBG) then
+      print *, cyellow // "DISPLAY PASS MESSAGE" // cclear
+    end if
+    
+    print '(A,A,A,A)', cgreen, SPC , PASSMSG, cclear
+  end subroutine
+
   !>---------------------------------------------------------------------------------------------------<!
   
   !> Display failed results for tests using the datatype ERROR_MSG_TYPE
@@ -477,7 +489,7 @@ contains
       call display_failed_message(error)
       failed = failed + 1
     else 
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -491,7 +503,7 @@ contains
       call display_failed_message(error)
       failed = failed + 1
     else 
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -515,7 +527,7 @@ contains
       call display_failed_message(error)
       failed = failed + 1
     else
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -537,7 +549,7 @@ contains
       call display_failed_message(error)
       failed = failed + 1
     else
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -571,7 +583,7 @@ contains
       call display_failed_message(error)
       failed = failed + 1
     else 
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -579,7 +591,7 @@ contains
 
   !> Always pass test
   subroutine assert_pass()
-    print *, PASSMSG
+    call display_passmsg()
   end subroutine
 
   !> Always fails test
@@ -610,7 +622,7 @@ contains
       call display_failed_message(error)
       failed = failed + 1
     else 
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -625,7 +637,7 @@ contains
       call display_failed_message(error)
       failed = failed + 1
     else 
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -643,7 +655,7 @@ contains
       call display_failed_message(error)
       failed =  failed + 1
     else
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -659,7 +671,7 @@ contains
       call display_failed_message(error)
       failed =  failed + 1
     else
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -681,7 +693,7 @@ contains
       call display_failed_message(error)
       failed =  failed + 1
     else
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -696,7 +708,7 @@ contains
       call display_failed_message(error)
       failed =  failed + 1
     else
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -711,7 +723,7 @@ contains
       call display_failed_message(error)
       failed =  failed + 1
     else
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine  
 
@@ -731,7 +743,7 @@ contains
       call display_failed_message(error)
       failed =  failed + 1
     else
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine  
 
@@ -751,7 +763,7 @@ contains
       call display_failed_message(error)
       failed = failed + 1
     else 
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -769,7 +781,7 @@ contains
       call display_failed_message(error)
       failed = failed + 1
     else 
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -791,7 +803,7 @@ contains
       call display_failed_message(error)
       failed = failed + 1
     else 
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -811,7 +823,7 @@ contains
       call display_failed_message(error)
       failed = failed + 1
     else 
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -834,7 +846,7 @@ contains
       call display_failed_message(error)
       failed = failed + 1
     else 
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -855,7 +867,7 @@ contains
       call display_failed_message(error)
       failed = failed + 1
     else 
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -886,7 +898,7 @@ contains
       call display_failed_message(error)
       failed = failed + 1
     else 
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -907,7 +919,7 @@ contains
       call display_failed_message(error)
       failed = failed + 1
     else 
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -928,7 +940,7 @@ contains
       call display_failed_message(error)
       failed = failed + 1
     else 
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -960,7 +972,7 @@ contains
       call display_failed_message(error)
       failed = failed + 1
     else 
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -976,7 +988,7 @@ contains
       call display_failed_message(error)
       failed = failed + 1
     else 
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -990,7 +1002,7 @@ contains
       call display_failed_message(error)
       failed = failed + 1
     else 
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -1009,7 +1021,7 @@ contains
       call display_failed_message(error)
       failed = failed + 1
     else 
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -1023,7 +1035,7 @@ contains
       call display_failed_message(error)
       failed = failed + 1
     else 
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -1037,7 +1049,7 @@ contains
       call display_failed_message(error)
       failed = failed + 1
     else 
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -1058,7 +1070,7 @@ contains
       call display_failed_message(error)
       failed = failed + 1
     else 
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -1083,7 +1095,7 @@ contains
       call display_failed_message(error)
       failed = failed + 1
     else 
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -1106,7 +1118,7 @@ contains
       call display_failed_message(error)
       failed = failed + 1
     else 
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -1141,7 +1153,7 @@ contains
       call display_failed_message(error)
       failed = failed + 1
     else 
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -1166,7 +1178,7 @@ contains
       call display_failed_message(error)
       failed = failed + 1
     else 
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -1189,7 +1201,7 @@ contains
       call display_failed_message(error)
       failed = failed + 1
     else 
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
@@ -1224,7 +1236,7 @@ contains
       call display_failed_message(error)
       failed = failed + 1
     else 
-      print *, PASSMSG
+      call display_passmsg()
     end if
   end subroutine
 
